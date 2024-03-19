@@ -1,0 +1,6 @@
+<root>
+    <Panel style="width:50%;height:50%;background-color:red;" hittest="false">
+        <Panel id="sad2">
+        </Panel> 
+    </Panel>
+</root>

@@ -16,14 +16,30 @@ end
 
 -- Create the game mode when we activate
 function Activate()
-	GameRules.AddonTemplate = CAddonTemplateGameMode()
-	GameRules.AddonTemplate:InitGameMode()
+	CAddonTemplateGameMode:InitGameMode()
 end
+function CAddonTemplateGameMode:OnPlayerSpawned(args)
+	print(args.heroindex)
+	print(args.hero)
+	print(EntIndexToHScript(args.heroindex)==nil)
+	local hero=EntIndexToHScript(args.heroindex)
+	local hero_position=hero:GetCenter()
+	print(hero_position)
+	local hero_lion=CreateUnitByName("npc_dota_hero_lion", Vector(-1000,-1350,164), false, nil, nil, 3)
+	local spike=hero_lion:FindAbilityByName("lion_impale")
+	hero_lion:UpgradeAbility(spike)
+	print(spike:GetLevel())
+	print("upgrade")
+	hero_lion:CastAbilityOnPosition(hero_position, spike, -1)
 
+end
 function CAddonTemplateGameMode:InitGameMode()
 	print( "Template addon is loaded." )
-	GameRules:GetGameModeEntity():SetThink( "OnThink", self, "GlobalThink", 2 )
-	CreateUnitByName("npc_dota_hero_templar_assassin_template", Vector(0,1200,0), true, nil, nil, DOTA_TEAM_GOODGUYS)
+	local GameMode = GameRules:GetGameModeEntity()
+	GameRules:EnableCustomGameSetupAutoLaunch(true)
+	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
+	GameMode:SetCustomGameForceHero("antimage")
+	ListenToGameEvent("dota_on_hero_finish_spawn", Dynamic_Wrap(self,"OnPlayerSpawned"),self)
 end
 
 -- Evaluate the state of the game
