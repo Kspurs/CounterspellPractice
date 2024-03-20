@@ -23,15 +23,26 @@ function CAddonTemplateGameMode:OnPlayerSpawned(args)
 	print(args.hero)
 	print(EntIndexToHScript(args.heroindex)==nil)
 	local hero=EntIndexToHScript(args.heroindex)
-	local hero_position=hero:GetCenter()
+	local hero_position=hero:GetAbsOrigin()
+	local mana_break=hero:FindAbilityByName("antimage_mana_break")
+	local spell_shield=hero:GetAbilityByIndex(2)
+	local blink=hero:FindAbilityByName("antimage_blink")
+	spell_shield:SetLevel(1)
 	print(hero_position)
 	local hero_lion=CreateUnitByName("npc_dota_hero_lion", Vector(-1000,-1350,164), false, nil, nil, 3)
-	local spike=hero_lion:FindAbilityByName("lion_impale")
-	hero_lion:UpgradeAbility(spike)
-	print(spike:GetLevel())
-	print("upgrade")
-	hero_lion:CastAbilityOnPosition(hero_position, spike, -1)
-
+	local spike=hero_lion:GetAbilityByIndex(1)
+	spike:SetLevel(1)
+	
+		
+	
+end
+function CAddonTemplateGameMode:OnPlayerCastAbility(args)
+	print(args.abilityname)
+	for _,ent in pairs(Entities:FindAllByName("npc_dota_hero_lion")) do
+		print(ent==nil)
+		print(ent:GetAbsOrigin())
+		ent:CastAbilityOnTarget(EntIndexToHScript(args.caster_entindex),ent:GetAbilityByIndex(1),-1)
+	end
 end
 function CAddonTemplateGameMode:InitGameMode()
 	print( "Template addon is loaded." )
@@ -40,6 +51,7 @@ function CAddonTemplateGameMode:InitGameMode()
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
 	GameMode:SetCustomGameForceHero("antimage")
 	ListenToGameEvent("dota_on_hero_finish_spawn", Dynamic_Wrap(self,"OnPlayerSpawned"),self)
+	ListenToGameEvent("dota_player_used_ability",Dynamic_Wrap(self,"OnPlayerCastAbility"),self)
 end
 
 -- Evaluate the state of the game
