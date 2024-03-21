@@ -1,6 +1,14 @@
+
 <root>
-    <Panel style="width:50%;height:50%;background-color:red;" hittest="false">
-        <Panel id="sad2">
+<scripts>
+    <include src="file://{resources}/scripts/custom_game/hud.js"/>
+</scripts>
+    <Panel style="margin-left:25%;margin-top:25%;width:50%;height:50%;background-color:black;" hittest="false">
+        <Panel id="sa2">
+        <Button id="impale" onactivate="OnUseImpale()">
+            <DOTAAbilityImage id="myability" abilityname="lion_impale" />
+           
+        </Button>
         </Panel> 
     </Panel>
 </root>
