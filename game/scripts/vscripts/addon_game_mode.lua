@@ -1,7 +1,7 @@
 -- Generated from template
 
 if CAddonTemplateGameMode == nil then
-	CAddonTemplateGameMode = class({})
+	CAddonTemplateGameMode = class({chosen_ability=nil})
 end
 
 function Precache( context )
@@ -29,20 +29,26 @@ function CAddonTemplateGameMode:OnPlayerSpawned(args)
 	local blink=hero:FindAbilityByName("antimage_blink")
 	spell_shield:SetLevel(1)
 	print(hero_position)
-	local hero_lion=CreateUnitByName("npc_dota_hero_lion", Vector(-1000,-1350,164), false, nil, nil, 3)
-	local spike=hero_lion:GetAbilityByIndex(1)
-	spike:SetLevel(1)
+	
 	
 		
 	
 end
-function CAddonTemplateGameMode:OnPlayerCastAbility(args)
+function OnRandomInterval(args)
+	local hero=Entities:FindByName(nil,"npc_dota_hero_antimage")
+	args:CastAbilityOnTarget(hero, args:FindAbilityByName("lion_impale"), -1)
+	
+end
+function CAddonTemplateGameMode:OnPlayerChosenAbility(args)
 	print(args.abilityname)
-	for _,ent in pairs(Entities:FindAllByName("npc_dota_hero_lion")) do
-		print(ent==nil)
-		print(ent:GetAbsOrigin())
-		ent:CastAbilityOnTarget(EntIndexToHScript(args.caster_entindex),ent:GetAbilityByIndex(1),-1)
-	end
+	print(args.heroname)
+	local hero=Entities:FindByName(nil,"npc_dota_hero_antimage")
+	local enermy_spawn_position=hero:GetForwardVector()*400+hero:GetAbsOrigin()
+	local enermy=CreateUnitByName("npc_dota_hero_"..args.heroname, enermy_spawn_position, false, nil, nil, 3)
+	local ability=enermy:FindAbilityByName(args.abilityname)
+	ability:SetLevel(1)
+	local random_time=math.random(1,10)
+	enermy:SetThink("OnRandomInterval",self,random_time)
 end
 function CAddonTemplateGameMode:InitGameMode()
 	print( "Template addon is loaded." )
@@ -51,7 +57,8 @@ function CAddonTemplateGameMode:InitGameMode()
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
 	GameMode:SetCustomGameForceHero("antimage")
 	ListenToGameEvent("dota_on_hero_finish_spawn", Dynamic_Wrap(self,"OnPlayerSpawned"),self)
-	ListenToGameEvent("dota_player_used_ability",Dynamic_Wrap(self,"OnPlayerCastAbility"),self)
+	CustomGameEventManager:RegisterListener("OnPlayerChosenAbility", Dynamic_Wrap(self, "OnPlayerChosenAbility"))
+	ListenToGameEvent("OnPlayerChosenAbility",Dynamic_Wrap(self,"OnPlayerChosenAbility"),self)
 end
 
 -- Evaluate the state of the game
