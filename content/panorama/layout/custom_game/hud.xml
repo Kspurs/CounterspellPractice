@@ -1,14 +1,21 @@
-
 <root>
 <scripts>
     <include src="file://{resources}/scripts/custom_game/hud.js"/>
 </scripts>
-    <Panel style="margin-left:25%;margin-top:25%;width:50%;height:50%;background-color:black;" hittest="false">
-        <Panel id="sa2">
-        <Button id="impale" onactivate="OnUseImpale()">
-            <DOTAAbilityImage id="myability" abilityname="lion_impale" />
+<styles>
+     <include src="file://{resources}/styles/custom_game/hud.css"/>
+</styles>
+    <Panel style="margin-left:25%;margin-top:25%;width:50%;height:50%;background-color:black;flow-children:down;" hittest="false">
+        <Panel id="sa2" style="height:90%;width:100%;overflow:squish scroll;">
+            <Button id="impale" onactivate="OnUseImpale()">
+                <DOTAAbilityImage id="myability" abilityname="lion_impale" />
            
-        </Button>
+            </Button>
+        </Panel>
+        <Panel style="text-align:center;height:10%;width:100%;">
+            <Button id="ExampleButton1">
+                <Label class="ExampleButton1Label" text="Start Practice"/>
+            </Button>   
         </Panel>
     </Panel>
 </root>
